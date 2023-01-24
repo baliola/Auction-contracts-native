@@ -128,6 +128,36 @@ contract Auction721 {
         baliolaWallet = _baliola;
     }
 
+    function placeBid(address payable bidder)
+        external
+        payable
+        onlyManager
+        returns (bool)
+    {
+        uint256 bidAmount = msg.value;
+
+        require(bidder != creator, "The auction creator can not place a bid");
+        require(
+            getAuctionState() == AuctionState.OPEN,
+            "can only place bid if the auction open"
+        );
+
+        require(
+            bidAmount > startPrice,
+            "the bid must be higher than the start price"
+        );
+
+        if (directBuyStatus && bidAmount >= directBuyPrice) {
+            isDirectBuy = true;
+        }
+
+        if (bidder == maxBidder) {
+            return handleSameMaxBidder(bidAmount);
+        }
+
+        return handleDifferentMaxBidder(bidder, bidAmount);
+    }
+
     function handleSameMaxBidder(uint256 bidAmount) private returns (bool) {
         require(
             bidAmount > minIncrement,
@@ -160,36 +190,6 @@ contract Auction721 {
         emit NewBid(bidder, bidAmount);
 
         return true;
-    }
-
-    function placeBid(address payable bidder)
-        external
-        payable
-        onlyManager
-        returns (bool)
-    {
-        uint256 bidAmount = msg.value;
-
-        require(bidder != creator, "The auction creator can not place a bid");
-        require(
-            getAuctionState() == AuctionState.OPEN,
-            "can only place bid if the auction open"
-        );
-
-        require(
-            bidAmount > startPrice,
-            "the bid must be higher than the start price"
-        );
-
-        if (directBuyStatus && bidAmount >= directBuyPrice) {
-            isDirectBuy = true;
-        }
-
-        if (bidder == maxBidder) {
-            return handleSameMaxBidder(bidAmount);
-        }
-
-        return handleDifferentMaxBidder(bidder, bidAmount);
     }
 
     function withdrawToken() external returns (bool) {
