@@ -1,1 +1,10 @@
 node_modules/
+# truffle
+build
+
+# typechain
+types
+
+# buidler
+artifacts
+cache
