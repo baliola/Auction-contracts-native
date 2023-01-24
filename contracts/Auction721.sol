@@ -9,9 +9,9 @@ contract Auction721 {
     uint256 public endTime; // Timestamp of the end of the auction (in seconds)
     uint256 public startTime; // The block timestamp which marks the start of the auction
     uint256 public maxBid; // The maximum bid
-    address public maxBidder; // The address of the maximum bidder
-    address public creator; // The address of the auction creator
-    address public nftSeller; // the address of the nft seller
+    address payable public maxBidder; // The address of the maximum bidder
+    address payable public creator; // The address of the auction creator
+    address payable public nftSeller; // the address of the nft seller
     uint256 public tokenId; // The id of the token
     bool public isCancelled; // If the the auction is cancelled
     bool public isDirectBuy; // True if the auction ended due to direct buy
@@ -23,7 +23,7 @@ contract Auction721 {
     address public manager;
     bool public directBuyStatus; // indicating whether the auction has a directbuy price
     bool public isEndedByCreator;
-    address public baliolaWallet;
+    address payable public baliolaWallet;
 
     function onERC721Received(
         address,
@@ -79,7 +79,7 @@ contract Auction721 {
         isCancelled = true; // The auction has been cancelled
 
         nft721.transferFrom(address(this), creator, tokenId); // Transfer the NFT token to the auction creator
-        // TODO : refund maxbidder funds kepeng.transfer(maxBidder, maxBid);
+        maxBidder.transfer(maxBid);
         emit AuctionCanceled(); // Emit Auction Canceled event
         return true;
     }
@@ -101,15 +101,15 @@ contract Auction721 {
 
     // Auction constructor
     constructor(
-        address _creator,
+        address payable _creator,
         uint256 _endTime,
-        address _baliola,
+        address payable _baliola,
         bool _directBuyStatus,
         uint256 _directBuyPrice,
         uint256 _startPrice,
         address _nftAddress,
         uint256 _tokenId,
-        address _nftSeller
+        address payable _nftSeller
     ) {
         creator = _creator; // The address of the auction creator
         if (_endTime == 0) {
@@ -159,11 +159,11 @@ contract Auction721 {
         return true;
     }
 
-    function handleDifferentMaxBidder(address bidder, uint256 bidAmount)
+    function handleDifferentMaxBidder(address payable bidder, uint256 bidAmount)
         private
         returns (bool)
     {
-        address lastHighestBidder = maxBidder; // The address of the last highest bidder
+        address payable lastHighestBidder = maxBidder; // The address of the last highest bidder
         uint256 lastHighestBid = maxBid; // The last highest bid
 
         require(
@@ -173,23 +173,12 @@ contract Auction721 {
         maxBid = bidAmount; // The new highest bid
         maxBidder = bidder; // The address of the new highest bidder
 
-        if (directBuyStatus) {
-            if (bidAmount >= directBuyPrice) {
-                // If the bid is higher than the direct buy price
-                isDirectBuy = true; // The auction has ended
-            }
-
-            if (lastHighestBid != 0) {
-                // TODO : transfer the prev bids to the prev highest bid
-            }
-
-            emit NewBid(bidder, bidAmount); // emit a new bid event
-
-            return true; // The bid was placed successfully
+        if (directBuyStatus && bidAmount >= directBuyPrice) {
+            isDirectBuy = true; // The auction has ended
         }
 
         if (lastHighestBid != 0) {
-            // TODO : refund the previous bid to the previous highest bidder
+            lastHighestBidder.transfer(lastHighestBid);
         }
 
         emit NewBid(bidder, bidAmount); // emit a new bid event
@@ -198,7 +187,7 @@ contract Auction721 {
     }
 
     // Place a bid on the auction
-    function placeBid(address bidder)
+    function placeBid(address payable bidder)
         external
         payable
         onlyManager
@@ -220,13 +209,15 @@ contract Auction721 {
         // this will executed if the bidder is the same max bidder as before
         if (bidder == maxBidder) {
             return handleSameMaxBidder(bidAmount);
-        } else {
-            return handleDifferentMaxBidder(bidder, bidAmount);
         }
+
+        return handleDifferentMaxBidder(bidder, bidAmount);
     }
 
     // Withdraw the token after the auction is over
     function withdrawToken() external returns (bool) {
+        address _maxBidder = maxBidder; // max bidder cache
+
         require(
             getAuctionState() == AuctionState.ENDED ||
                 getAuctionState() == AuctionState.DIRECT_BUY ||
@@ -235,18 +226,22 @@ contract Auction721 {
         ); // The auction must be ended by either a direct buy or timeout
 
         require(
-            msg.sender == maxBidder,
+            msg.sender == _maxBidder,
             " Only the highest bidder can  withdraw the token"
         );
 
-        nft721.transferFrom(address(this), maxBidder, tokenId); // Transfer the token to the highest bidder
-        emit WithdrawToken(maxBidder); // Emit a withdraw token event
+        nft721.transferFrom(address(this), _maxBidder, tokenId); // Transfer the token to the highest bidder
+        emit WithdrawToken(_maxBidder); // Emit a withdraw token event
 
         return true;
     }
 
     // Withdraw the funds after the auction is over
     function withdrawFunds() external returns (bool) {
+        address payable _creator = creator; // creator stack cache
+        uint256 _maxBid = maxBid; // maxbid stack cache
+        address payable _nftSeller = nftSeller; // nftSeller stack cache
+
         require(
             getAuctionState() == AuctionState.ENDED ||
                 getAuctionState() == AuctionState.DIRECT_BUY ||
@@ -255,20 +250,18 @@ contract Auction721 {
         );
 
         require(
-            msg.sender == creator,
+            msg.sender == _creator,
             "The auction creator can only withdraw the funds"
         );
-
-        uint256 _maxBid = maxBid; // maxbid stack cache
 
         uint256 principal = _calculatePrincipal(_maxBid);
         uint256 fee = _calculateFee(principal);
         uint256 reward = _calculateReward(_maxBid, fee);
 
-        // TODO : transfer funds to the creator  transfer(nftSeller, reward); // Transfers funds to the creator
-        // TODO : transfer fee to baliola transfer(baliolaWallet, fee);
+        _nftSeller.transfer(reward); // Transfers funds to the creator
+        baliolaWallet.transfer(fee);
 
-        emit WithdrawFunds(nftSeller, _maxBid); // Emit a withdraw funds event
+        emit WithdrawFunds(_nftSeller, _maxBid); // Emit a withdraw funds event
 
         return true;
     }
