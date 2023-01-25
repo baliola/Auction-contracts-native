@@ -275,4 +275,11 @@ contract Auction1155 is ERC1155Holder {
     {
         return _maxBid - _fee;
     }
+
+    /// @dev Default payable function to not allow sending to contract
+    ///  Remember this does not necessarily prevent the contract
+    ///  from accumulating funds.
+    fallback() external payable {
+        revert();
+    }
 }
