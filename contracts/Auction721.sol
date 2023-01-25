@@ -157,12 +157,20 @@ contract Auction721 {
     }
 
     function handleSameMaxBidder(uint256 bidAmount) private returns (bool) {
+        uint256 _maxBid = maxBid; // maxbid stack cache
+
         require(
             bidAmount > minIncrement,
             "the bid must be higher than the minimum increment"
         );
 
-        maxBid = maxBid + bidAmount;
+        _maxBid = _maxBid + bidAmount;
+
+        if (_maxBid >= directBuyPrice) {
+            isDirectBuy = true; // The auction has ended
+        }
+
+        maxBid = _maxBid;
 
         return true;
     }
@@ -206,6 +214,7 @@ contract Auction721 {
         );
 
         nft721.transferFrom(address(this), _maxBidder, tokenId);
+
         emit WithdrawToken(_maxBidder);
 
         return true;
