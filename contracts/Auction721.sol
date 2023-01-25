@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 contract Auction721 {
-    using SafeMath for uint256;
     uint256 public endTime; // Timestamp of the end of the auction (in seconds)
     uint256 public startTime; // The block timestamp which marks the start of the auction
     uint256 public maxBid; // The maximum bid
