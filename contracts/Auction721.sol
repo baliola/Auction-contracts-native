@@ -118,8 +118,9 @@ contract Auction721 {
         baliolaWallet = _baliola;
     }
 
-    function placeBid(address payable bidder) external payable returns (bool) {
+    function placeBid() external payable returns (bool) {
         uint256 bidAmount = msg.value;
+        address payable bidder = payable(msg.sender);
 
         require(bidder != creator, "The auction creator can not place a bid");
         require(

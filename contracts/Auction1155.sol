@@ -121,8 +121,9 @@ contract Auction1155 is ERC1155Holder {
         nftAmount = _nftAmount;
     }
 
-    function placeBid(address payable bidder) external payable returns (bool) {
+    function placeBid() external payable returns (bool) {
         uint256 bidAmount = msg.value;
+        address payable bidder = payable(msg.sender);
 
         require(bidder != creator, "The auction creator can not place a bid");
         require(

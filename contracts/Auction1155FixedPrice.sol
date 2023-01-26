@@ -58,11 +58,8 @@ contract AuctionFixedPrice1155 is ERC1155Holder {
         price = _price;
     }
 
-    function refill(address _creator, uint256 amount)
-        external
-        onlyManager
-        returns (bool)
-    {
+    function refill(uint256 amount) external onlyManager returns (bool) {
+        address _creator = msg.sender;
         require(
             getAuctionState() == AuctionState.OPEN,
             "can only refill when auction is still open"
