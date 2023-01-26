@@ -45,11 +45,6 @@ contract Auction721 {
         ENDED_BY_CREATOR
     }
 
-    modifier onlyManager() {
-        require(msg.sender == manager, "only manager can call");
-        _;
-    }
-
     function endAuctionByCreator() external returns (bool) {
         require(msg.sender == creator, "only the creator can end the auction!");
         require(
@@ -123,12 +118,7 @@ contract Auction721 {
         baliolaWallet = _baliola;
     }
 
-    function placeBid(address payable bidder)
-        external
-        payable
-        onlyManager
-        returns (bool)
-    {
+    function placeBid(address payable bidder) external payable returns (bool) {
         uint256 bidAmount = msg.value;
 
         require(bidder != creator, "The auction creator can not place a bid");

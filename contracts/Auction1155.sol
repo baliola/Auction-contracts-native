@@ -38,11 +38,6 @@ contract Auction1155 is ERC1155Holder {
         ENDED_BY_CREATOR
     }
 
-    modifier onlyManager() {
-        require(msg.sender == manager, "only manager can call");
-        _;
-    }
-
     function endAuctionByCreator() external returns (bool) {
         require(msg.sender == creator, "only the creator can end the auction!");
         require(
@@ -126,12 +121,7 @@ contract Auction1155 is ERC1155Holder {
         nftAmount = _nftAmount;
     }
 
-    function placeBid(address payable bidder)
-        external
-        payable
-        onlyManager
-        returns (bool)
-    {
+    function placeBid(address payable bidder) external payable returns (bool) {
         uint256 bidAmount = msg.value;
 
         require(bidder != creator, "The auction creator can not place a bid");
