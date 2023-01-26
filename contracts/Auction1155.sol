@@ -10,7 +10,6 @@ contract Auction1155 is ERC1155Holder {
     uint256 public maxBid; // The maximum bid
     address payable public maxBidder; // The address of the maximum bidder
     address payable public creator; // The address of the auction creator
-    address payable public nftSeller; // the address of the nft seller
     uint256 public tokenId; // The id of the token
     bool public isCancelled; // If the the auction is cancelled
     bool public isDirectBuy; // True if the auction ended due to direct buy
@@ -105,8 +104,7 @@ contract Auction1155 is ERC1155Holder {
         uint256 _startPrice,
         address _nftAddress,
         uint256 _tokenId,
-        uint256 _nftAmount,
-        address payable _nftSeller
+        uint256 _nftAmount
     ) {
         creator = _creator;
         if (_endTime == 0) {
@@ -123,7 +121,6 @@ contract Auction1155 is ERC1155Holder {
         nftAddress = _nftAddress;
         tokenId = _tokenId;
         maxBidder = _creator;
-        nftSeller = _nftSeller;
         manager = msg.sender;
         baliolaWallet = _baliola;
         nftAmount = _nftAmount;
@@ -231,7 +228,6 @@ contract Auction1155 is ERC1155Holder {
     function withdrawFunds() external returns (bool) {
         address payable _creator = creator;
         uint256 _maxBid = maxBid;
-        address payable _nftSeller = nftSeller;
 
         require(
             getAuctionState() == AuctionState.ENDED ||
@@ -248,10 +244,10 @@ contract Auction1155 is ERC1155Holder {
         uint256 fee = _calculateFee(principal);
         uint256 reward = _calculateReward(_maxBid, fee);
 
-        _nftSeller.transfer(reward);
+        _creator.transfer(reward);
         baliolaWallet.transfer(fee);
 
-        emit WithdrawFunds(nftSeller, _maxBid);
+        emit WithdrawFunds(_creator, _maxBid);
 
         return true;
     }

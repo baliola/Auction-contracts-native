@@ -9,7 +9,6 @@ contract Auction721 {
     uint256 public maxBid; // The maximum bid
     address payable public maxBidder; // The address of the maximum bidder
     address payable public creator; // The address of the auction creator
-    address payable public nftSeller; // the address of the nft seller
     uint256 public tokenId; // The id of the token
     bool public isCancelled; // If the the auction is cancelled
     bool public isDirectBuy; // True if the auction ended due to direct buy
@@ -103,8 +102,7 @@ contract Auction721 {
         uint256 _directBuyPrice,
         uint256 _startPrice,
         address _nftAddress,
-        uint256 _tokenId,
-        address payable _nftSeller
+        uint256 _tokenId
     ) {
         creator = _creator;
         if (_endTime == 0) {
@@ -121,7 +119,6 @@ contract Auction721 {
         nftAddress = _nftAddress;
         tokenId = _tokenId;
         maxBidder = _creator;
-        nftSeller = _nftSeller;
         manager = msg.sender;
         baliolaWallet = _baliola;
     }
@@ -223,7 +220,6 @@ contract Auction721 {
     function withdrawFunds() external returns (bool) {
         address payable _creator = creator; // creator stack cache
         uint256 _maxBid = maxBid; // maxbid stack cache
-        address payable _nftSeller = nftSeller; // nftSeller stack cache
 
         require(
             getAuctionState() == AuctionState.ENDED ||
@@ -241,10 +237,10 @@ contract Auction721 {
         uint256 fee = _calculateFee(principal);
         uint256 reward = _calculateReward(_maxBid, fee);
 
-        _nftSeller.transfer(reward);
+        _creator.transfer(reward);
         baliolaWallet.transfer(fee);
 
-        emit WithdrawFunds(_nftSeller, _maxBid);
+        emit WithdrawFunds(_creator, _maxBid);
 
         return true;
     }
