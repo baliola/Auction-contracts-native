@@ -71,6 +71,11 @@ contract AuctionFixedPrice1155 is ERC1155Holder {
         address _buyer = msg.sender;
         address payable _creator = creator;
 
+        uint256 _tx = (txFee * 100) / 103;
+        uint256 baliolaFee = (_tx * 3) / 100;
+
+        baliolaWallet.transfer(baliolaFee);
+
         require(_buyer != _creator, "creator cannot buy nft!");
         require(availableNFT != 0, "out of supply! no nft is being selled!");
         require(_amount <= availableNFT, "not enough available nft!");
@@ -78,15 +83,12 @@ contract AuctionFixedPrice1155 is ERC1155Holder {
             getAuctionState() == AuctionState.OPEN,
             "can only buy nft when auction is open!"
         );
-        require(
-            txFee == price * _amount,
-            "can only buy if the fee is correct!"
-        );
+        require(_tx == price * _amount, "can only buy if the fee is correct!");
 
         availableNFT = availableNFT - _amount;
 
         nft1155.safeTransferFrom(address(this), _buyer, tokenId, _amount, "");
-        _creator.transfer(txFee);
+        _creator.transfer(_tx);
 
         emit hasBought(_buyer, _amount);
 
