@@ -102,11 +102,7 @@ contract Auction1155 is ERC1155Holder {
         uint256 _nftAmount
     ) {
         creator = _creator;
-        if (_endTime == 0) {
-            endTime = 0;
-        } else {
-            endTime = _endTime;
-        }
+        endTime = _endTime;
         startTime = block.timestamp;
         minIncrement = 1e17;
         directBuyStatus = _directBuyStatus;

@@ -100,11 +100,7 @@ contract Auction721 {
         uint256 _tokenId
     ) {
         creator = _creator;
-        if (_endTime == 0) {
-            endTime = 0;
-        } else {
-            endTime = _endTime;
-        }
+        endTime = _endTime;
         startTime = block.timestamp;
         minIncrement = 1e17; // 0.1 native currency
         directBuyStatus = _directBuyStatus;
