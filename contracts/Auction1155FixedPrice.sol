@@ -61,6 +61,14 @@ contract AuctionFixedPrice1155 is ERC1155Holder {
         require(_creator == creator, "only creator can refill");
         availableNFT = availableNFT + amount;
 
+        nft1155.safeTransferFrom(
+            msg.sender,
+            address(this),
+            tokenId,
+            amount,
+            ""
+        );
+
         emit Refilled(amount);
 
         return true;
