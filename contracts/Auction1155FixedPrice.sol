@@ -10,7 +10,6 @@ contract AuctionFixedPrice1155 is ERC1155Holder {
     bool public isEnded; // If the the auction is cancelled
     address public nftAddress; // The address of the NFT contract
     IERC1155 nft1155; // The NFT token
-    address public manager; // address of auction manager
     bool public isEndedByCreator;
     address payable public baliolaWallet;
     uint256 public initialNftAmount; // initial amount of nft
@@ -27,11 +26,6 @@ contract AuctionFixedPrice1155 is ERC1155Holder {
     event OutOfSupply();
     event hasBought(address indexed buyer, uint256 amount);
     event Refilled(uint256 amount);
-
-    modifier onlyManager() {
-        require(msg.sender == manager, "only manager can call");
-        _;
-    }
 
     function getAuctionState() public view returns (AuctionState) {
         if (availableNFT == 0) return AuctionState.OUT_OF_SUPPLY;
@@ -51,14 +45,13 @@ contract AuctionFixedPrice1155 is ERC1155Holder {
         nft1155 = IERC1155(_nftAddress);
         nftAddress = _nftAddress;
         tokenId = _tokenId;
-        manager = msg.sender;
         baliolaWallet = _baliola;
         initialNftAmount = _nftAmount;
         availableNFT = _nftAmount;
         price = _price;
     }
 
-    function refill(uint256 amount) external onlyManager returns (bool) {
+    function refill(uint256 amount) external returns (bool) {
         address _creator = msg.sender;
         require(
             getAuctionState() == AuctionState.OPEN,

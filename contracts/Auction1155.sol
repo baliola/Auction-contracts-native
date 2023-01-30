@@ -18,7 +18,6 @@ contract Auction1155 is ERC1155Holder {
     uint256 public startPrice; // The starting price for the auction
     address public nftAddress; // The address of the NFT contract
     IERC1155 nft1155; // The NFT token
-    address public manager;
     bool public directBuyStatus; // indicating whether the auction has a directbuy price
     bool public isEndedByCreator;
     address payable public baliolaWallet;
@@ -112,7 +111,6 @@ contract Auction1155 is ERC1155Holder {
         nftAddress = _nftAddress;
         tokenId = _tokenId;
         maxBidder = _creator;
-        manager = msg.sender;
         baliolaWallet = _baliola;
         nftAmount = _nftAmount;
     }

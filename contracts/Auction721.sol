@@ -17,7 +17,6 @@ contract Auction721 {
     uint256 public startPrice; // The starting price for the auction
     address public nftAddress; // The address of the NFT contract
     IERC721 nft721; // The NFT token
-    address public manager;
     bool public directBuyStatus; // indicating whether the auction has a directbuy price
     bool public isEndedByCreator;
     address payable public baliolaWallet;
@@ -110,7 +109,6 @@ contract Auction721 {
         nftAddress = _nftAddress;
         tokenId = _tokenId;
         maxBidder = _creator;
-        manager = msg.sender;
         baliolaWallet = _baliola;
     }
 
