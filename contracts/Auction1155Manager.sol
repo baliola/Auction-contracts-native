@@ -46,39 +46,60 @@ contract AuctionManager1155 is ERC1155Holder {
         return true;
     }
 
-    // create an auction
-    function createAuction(
+    function createTimeAuction(
         uint256 _endTime,
-        bool _directBuyAuction,
-        uint256 _directBuyPrice,
         uint256 _startPrice,
         address _nftAddress,
         uint256 _tokenId,
         uint256 _nftAmount
     ) external returns (address) {
-        if (_directBuyAuction) {
-            require(
-                _directBuyPrice > 0,
-                "direct buy price must be greater than 0"
-            ); // direct buy price must be greater than 0
-            require(
-                _startPrice < _directBuyPrice,
-                "start price must be less than the direct buy price"
-            ); // start price must be less than the direct buy price
-        }
+        bool _directBuyStatus = false;
+        uint256 _directBuyPrice = 0;
 
-        if (_endTime != 0) {
-            require(
-                _endTime > (block.timestamp + 12 hours),
-                "must be greater than 12 hours"
-            );
-        }
+        require(
+            _endTime > (block.timestamp + 12 hours),
+            "must be greater than 12 hours"
+        );
 
         Auction1155 auction = new Auction1155(
             payable(msg.sender),
             _endTime,
             payable(baliola),
-            _directBuyAuction,
+            _directBuyStatus,
+            _directBuyPrice,
+            _startPrice,
+            _nftAddress,
+            _tokenId,
+            _nftAmount
+        );
+        IERC1155 _nftToken = IERC1155(_nftAddress); // get the nft token
+        _nftToken.safeTransferFrom(
+            msg.sender,
+            address(auction),
+            _tokenId,
+            _nftAmount,
+            ""
+        );
+        emit NewAuction(address(auction), msg.sender, _nftAddress, _nftAmount);
+
+        return address(auction);
+    }
+
+    function createOpenBidAuction(
+        uint256 _startPrice,
+        address _nftAddress,
+        uint256 _tokenId,
+        uint256 _nftAmount
+    ) external returns (address) {
+        uint256 _endTime = 0;
+        bool _directBuyStatus = false;
+        uint256 _directBuyPrice = 0;
+
+        Auction1155 auction = new Auction1155(
+            payable(msg.sender),
+            _endTime,
+            payable(baliola),
+            _directBuyStatus,
             _directBuyPrice,
             _startPrice,
             _nftAddress,
