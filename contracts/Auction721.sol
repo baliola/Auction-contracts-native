@@ -47,7 +47,8 @@ contract Auction721 {
     enum AuctionType {
         FIXED_PRICE,
         TIME_AUCTION,
-        OPEN_BID
+        OPEN_BID,
+        UNKNOWN
     }
 
     function endAuctionByCreator() external returns (bool) {
@@ -94,13 +95,27 @@ contract Auction721 {
         }
     }
 
-    function getAuctionType() external view returns (AuctionType) {}
+    function getAuctionType() external view returns (AuctionType) {
+        if (isOpenBid()) return AuctionType.OPEN_BID;
+        if (isTimeAuction()) return AuctionType.TIME_AUCTION;
+        if (isFixedPrice()) return AuctionType.FIXED_PRICE;
+        else return AuctionType.UNKNOWN;
+    }
 
-    function isOpenBid() private view returns (bool) {}
+    function isOpenBid() private view returns (bool status) {
+        if (endTime == 0 && directBuyStatus == false) return true;
+        else return false;
+    }
 
-    function isTimeAuction() private view returns (bool) {}
+    function isTimeAuction() private view returns (bool status) {
+        if (endTime != 0 && directBuyStatus == false) return true;
+        else return false;
+    }
 
-    function isFixedPrice() private view returns (bool) {}
+    function isFixedPrice() private view returns (bool status) {
+        if (endTime == 0 && directBuyStatus == true) return true;
+        else return false;
+    }
 
     constructor(
         address payable _creator,
