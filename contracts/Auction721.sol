@@ -44,6 +44,12 @@ contract Auction721 {
         ENDED_BY_CREATOR
     }
 
+    enum AuctionType {
+        FIXED_PRICE,
+        TIME_AUCTION,
+        OPEN_BID
+    }
+
     function endAuctionByCreator() external returns (bool) {
         require(msg.sender == creator, "only the creator can end the auction!");
         require(
@@ -87,6 +93,14 @@ contract Auction721 {
             return AuctionState.OPEN;
         }
     }
+
+    function getAuctionType() external view returns (AuctionType) {}
+
+    function isOpenBid() private view returns (bool) {}
+
+    function isTimeAuction() private view returns (bool) {}
+
+    function isFixedPrice() private view returns (bool) {}
 
     constructor(
         address payable _creator,
