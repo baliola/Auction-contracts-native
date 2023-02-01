@@ -53,38 +53,83 @@ contract AuctionManager721 {
         return this.onERC721Received.selector;
     }
 
-    // create an auction
-    function createAuction(
-        uint256 _endTime,
-        bool _directBuyAuction,
-        uint256 _directBuyPrice,
+    function createOpenBidAuction(
         uint256 _startPrice,
         address _nftAddress,
         uint256 _tokenId
     ) external returns (address) {
-        if (_directBuyAuction) {
-            require(
-                _directBuyPrice > 0,
-                "direct buy price must be greater than 0"
-            ); // direct buy price must be greater than 0
-            require(
-                _startPrice < _directBuyPrice,
-                "start price must be less than the direct buy price"
-            ); // start price must be less than the direct buy price
-        }
-
-        if (_endTime != 0) {
-            require(
-                _endTime > (block.timestamp + 12 hours),
-                "must be greater than 12 hours"
-            );
-        }
+        uint256 _endTime = 0;
+        bool _directBuyStatus = false;
+        uint256 _directBuyPrice = 0;
 
         Auction721 auction = new Auction721(
             payable(msg.sender),
             _endTime,
             payable(baliola),
-            _directBuyAuction,
+            _directBuyStatus,
+            _directBuyPrice,
+            _startPrice,
+            _nftAddress,
+            _tokenId
+        );
+        IERC721 _nftToken = IERC721(_nftAddress); // get the nft token
+        _nftToken.transferFrom(msg.sender, address(auction), _tokenId); // transfer the token to the auction
+
+        emit NewAuction(address(auction), msg.sender, _nftAddress);
+        return address(auction);
+    }
+
+    function createFixedPriceAuction(
+        uint256 _directBuyPrice,
+        uint256 _startPrice,
+        address _nftAddress,
+        uint256 _tokenId
+    ) external returns (address) {
+        bool _directBuyStatus = true;
+        uint256 _endTime = 0;
+
+        require(_directBuyPrice > 0, "direct buy price must be greater than 0");
+        require(
+            _startPrice < _directBuyPrice,
+            "start price must be less than the direct buy price"
+        );
+
+        Auction721 auction = new Auction721(
+            payable(msg.sender),
+            _endTime,
+            payable(baliola),
+            _directBuyStatus,
+            _directBuyPrice,
+            _startPrice,
+            _nftAddress,
+            _tokenId
+        );
+        IERC721 _nftToken = IERC721(_nftAddress); // get the nft token
+        _nftToken.transferFrom(msg.sender, address(auction), _tokenId); // transfer the token to the auction
+
+        emit NewAuction(address(auction), msg.sender, _nftAddress);
+        return address(auction);
+    }
+
+    function createTimeAuction(
+        uint256 _endTime,
+        uint256 _startPrice,
+        address _nftAddress,
+        uint256 _tokenId
+    ) external returns (address) {
+        bool _directBuyStatus = false;
+        uint256 _directBuyPrice = 0;
+
+        require(
+            _endTime > (block.timestamp + 12 hours),
+            "must be greater than 12 hours"
+        );
+
+        Auction721 auction = new Auction721(
+            payable(msg.sender),
+            _endTime,
+            payable(baliola),
+            _directBuyStatus,
             _directBuyPrice,
             _startPrice,
             _nftAddress,
