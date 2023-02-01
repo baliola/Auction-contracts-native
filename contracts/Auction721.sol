@@ -95,6 +95,14 @@ contract Auction721 {
         }
     }
 
+    modifier mustEnd() {
+        require(
+            getAuctionState() != AuctionState.OPEN,
+            "this action can only be done when the auction is ended"
+        );
+        _;
+    }
+
     function getAuctionType() public view returns (AuctionType) {
         if (isOpenBid()) return AuctionType.OPEN_BID;
         if (isTimeAuction()) return AuctionType.TIME_AUCTION;
@@ -227,15 +235,8 @@ contract Auction721 {
         return true;
     }
 
-    function withdrawToken() external returns (bool) {
+    function withdrawToken() external mustEnd returns (bool) {
         address _maxBidder = maxBidder; // max bidder cache
-
-        require(
-            getAuctionState() == AuctionState.ENDED ||
-                getAuctionState() == AuctionState.DIRECT_BUY ||
-                getAuctionState() == AuctionState.ENDED_BY_CREATOR,
-            "The auction must be ended by either a direct buy or timeout"
-        );
 
         require(
             msg.sender == _maxBidder,
@@ -249,16 +250,9 @@ contract Auction721 {
         return true;
     }
 
-    function withdrawFunds() external returns (bool) {
+    function withdrawFunds() external mustEnd returns (bool) {
         address payable _creator = creator; // creator stack cache
         uint256 _maxBid = maxBid; // maxbid stack cache
-
-        require(
-            getAuctionState() == AuctionState.ENDED ||
-                getAuctionState() == AuctionState.DIRECT_BUY ||
-                getAuctionState() == AuctionState.ENDED_BY_CREATOR,
-            "The auction must be ended by either a direct buy, by creator, or timeout"
-        );
 
         require(
             msg.sender == _creator,
