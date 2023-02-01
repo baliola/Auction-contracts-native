@@ -95,7 +95,7 @@ contract Auction721 {
         }
     }
 
-    function getAuctionType() external view returns (AuctionType) {
+    function getAuctionType() public view returns (AuctionType) {
         if (isOpenBid()) return AuctionType.OPEN_BID;
         if (isTimeAuction()) return AuctionType.TIME_AUCTION;
         if (isFixedPrice()) return AuctionType.FIXED_PRICE;
@@ -139,6 +139,24 @@ contract Auction721 {
         tokenId = _tokenId;
         maxBidder = _creator;
         baliolaWallet = _baliola;
+        checkAuctionType();
+    }
+
+    function checkAuctionType() private view {
+        AuctionType _type = getAuctionType();
+
+        if (_type == AuctionType.UNKNOWN) revert("unknown auction type");
+
+        if (_type == AuctionType.FIXED_PRICE && directBuyPrice == 0)
+            revert(
+                "cannot create fixed price auction with direct buy price : 0"
+            );
+
+        if (_type == AuctionType.OPEN_BID && directBuyPrice != 0)
+            revert("open bid auction cannot have a direct buy price");
+
+        if (_type == AuctionType.TIME_AUCTION && directBuyPrice != 0)
+            revert("time auction cannot have a direct buy price");
     }
 
     function placeBid() external payable returns (bool) {
