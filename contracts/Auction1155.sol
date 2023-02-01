@@ -37,6 +37,12 @@ contract Auction1155 is ERC1155Holder {
         ENDED_BY_CREATOR
     }
 
+    enum AuctionType {
+        TIME_AUCTION,
+        OPEN_BID,
+        UNKNOWN
+    }
+
     function endAuctionByCreator() external returns (bool) {
         require(msg.sender == creator, "only the creator can end the auction!");
         require(
@@ -87,6 +93,22 @@ contract Auction1155 is ERC1155Holder {
         } else {
             return AuctionState.OPEN;
         }
+    }
+
+    function getAuctionType() external view returns (AuctionType) {
+        if (isOpenBid()) return AuctionType.OPEN_BID;
+        if (isTimeAuction()) return AuctionType.TIME_AUCTION;
+        else return AuctionType.UNKNOWN;
+    }
+
+    function isOpenBid() private view returns (bool status) {
+        if (endTime == 0 && directBuyStatus == false) return true;
+        else return false;
+    }
+
+    function isTimeAuction() private view returns (bool status) {
+        if (endTime != 0 && directBuyStatus == false) return true;
+        else return false;
     }
 
     constructor(
