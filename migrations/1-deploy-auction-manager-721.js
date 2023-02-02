@@ -1,1 +1,0 @@
-module.exports = require("./1-deploy-auction-manager-721")(artifacts)

@@ -1,13 +1,10 @@
 {
   "compilerOptions": {
-    "lib": ["ES2018"],
-    "module": "CommonJS",
-    "target": "ES2018",
-    "strict": true,
+    "target": "es2020",
+    "module": "commonjs",
     "esModuleInterop": true,
-    "types": ["@types/node", "@types/chai", "@types/mocha"],
-    "typeRoots": ["./node_modules/@types", "./types"]
-  },
-  "include": ["**/*.ts"],
-  "exclude": ["node_modules", "build", "cache", "artifacts"]
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true
+  }
 }

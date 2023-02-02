@@ -1,1 +1,0 @@
-module.exports = require("./3-deploy-auction-manager-fixed-price-1155")(artifacts)
