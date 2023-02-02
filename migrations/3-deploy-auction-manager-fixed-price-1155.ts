@@ -4,17 +4,10 @@ module.exports = (artifacts: Truffle.Artifacts) => {
     network: string,
     accounts: string[]
   ) => {
-    const baliola = getBaliolaWallet(accounts);
-    const manager = getAuctionManagerManagerAccounts(accounts);
-
-    const auctionManager721 = artifacts.require("FixedPriceAuctionManager1155");
-
-    deployer.deploy(auctionManager721, baliola, manager);
-
-    await auctionManager721.deployed();
-
-    console.log(
-      `deployed auction manager 721 at address ${auctionManager721.address}`
+    await ContractDeployer.deployFixedPriceManager1155(
+      deployer,
+      network,
+      accounts
     );
   };
 };
