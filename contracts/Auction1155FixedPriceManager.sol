@@ -2,8 +2,8 @@
 pragma solidity ^0.8.7;
 
 import "./Auction1155FixedPrice.sol";
-import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
-import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
+import "./@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
+import "./@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 
 contract FixedPriceAuctionManager1155 is ERC1155Holder {
     uint256 _auctionIdCounter = 1; // auction Id counter

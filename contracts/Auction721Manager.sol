@@ -2,7 +2,7 @@
 pragma solidity ^0.8.7;
 
 import "./Auction721.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "./@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 contract AuctionManager721 {
     address baliola;

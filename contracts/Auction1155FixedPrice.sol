@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
-import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
-import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
+import "./@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
+import "./@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 
 contract AuctionFixedPrice1155 is ERC1155Holder {
     address payable public creator; // The address of the auction creator
