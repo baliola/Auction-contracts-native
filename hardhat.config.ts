@@ -23,6 +23,10 @@ const config: HardhatUserConfig = {
       default: 0,
       0: "0xAe77f889c8aF6536FCf80Ba674Adc4C2aB0C3070",
     },
+    baliola: {
+      default: 0,
+      0: "0xdF78770a54fdBdf1d20623cd67576A6d71E0D02d",
+    },
   },
 };
 
