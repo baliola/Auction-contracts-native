@@ -11,10 +11,15 @@ import { AuctionManager721 } from "../../../typechain-types/Auction721Manager.so
 
 export class ERC721Manager {
   private static readonly ident = contractIdentifier.auctionManager721;
+  static accessor contract: null | AuctionManager721;
   private constructor() {}
 
   public static async get() {
     return deployments.createFixture(this.fixture);
+  }
+
+  public static async reset() {
+    this.contract = null;
   }
 
   private static async fixture() {
@@ -22,5 +27,9 @@ export class ERC721Manager {
 
     const accounts = await Account.get();
     const contract: AuctionManager721 = await ethers.getContract(this.ident);
+
+    this.contract = contract;
+
+    return contract;
   }
 }
