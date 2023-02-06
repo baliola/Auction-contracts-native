@@ -4,7 +4,7 @@ pragma solidity ^0.8.7;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 contract Dummy721 is ERC721 {
-    uint256 _tokenCounter;
+    uint256 public _tokenCounter;
     mapping(uint256 => uint256) public itemValue;
     uint256 maxValue = 10000; // Max value of an item
 
