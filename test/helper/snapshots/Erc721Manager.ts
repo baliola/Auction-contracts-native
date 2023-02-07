@@ -198,7 +198,5 @@ export async function fixPriceAuction721Fixture(
     auctionAddress
   );
 
-  console.log(auction);
-
   return { auction, nft, auctionManager };
 }
