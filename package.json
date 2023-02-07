@@ -35,6 +35,7 @@
     "compile": "npx hardhat compile",
     "deploy": "npx hardhat deploy --no-compile",
     "deploy-compile": "yarn compile && yarn deploy",
-    "postinstall": "yarn compile"
+    "postinstall": "yarn compile",
+    "test":"npx hardhat test"
   }
 }
