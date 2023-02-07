@@ -40,5 +40,13 @@ describe("Auction 721", function () {
       const type = await auction.getAuctionType();
       expect(type).to.equal(AuctionType.TIME_AUCTION);
     });
+
+    describe("Bidding", function () {
+      // TODO
+    });
+
+    describe("Withdraw", function () {
+      // TODO
+    });
   });
 });
