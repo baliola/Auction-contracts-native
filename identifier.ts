@@ -7,6 +7,8 @@ export const accountIdentifier = {
 } as const;
 
 export const contractIdentifier = {
+  auction721: "Auction721",
+  auction1155: "Auction1155",
   auctionManager721: "AuctionManager721",
   auctionManager1155: "AuctionManager1155",
   fixedPriceAuctionManager1155: "FixedPriceAuctionManager1155",

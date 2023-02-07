@@ -1,22 +1,26 @@
 import { ethers, deployments } from "hardhat";
 import { contractIdentifier } from "../../../identifier";
-import { Account } from "../account";
 import { Dummy721 } from "../../../typechain-types/contracts/Dummy721";
+import { BigNumber } from "ethers";
+import { Account } from "../account";
+import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 
-export class ERC721 {
-  private static readonly ident = contractIdentifier.Dummy721;
-  private constructor() {}
+export async function dummy721Fixtures() {
+  return await loadFixture(fixture);
+}
 
-  public static async get() {
-    return deployments.createFixture(this.fixture);
-  }
+async function fixture() {
+  const accounts = await Account.get();
+  const contractIdent = contractIdentifier.Dummy721;
 
-  private static async fixture() {
-    await deployments.fixture(this.ident);
+  await deployments.deploy(contractIdent, {
+    from: accounts.deployer,
+    autoMine: true,
+    deterministicDeployment: true,
+    skipIfAlreadyDeployed: true,
+  });
 
-    const accounts = await Account.get();
-    const contract: Dummy721 = await ethers.getContract(this.ident);
+  const contract: Dummy721 = await ethers.getContract(contractIdent);
 
-    return contract;
-  }
+  return { contract, accounts };
 }

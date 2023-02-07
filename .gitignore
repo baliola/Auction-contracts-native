@@ -32,3 +32,5 @@ typechain-types
 cache
 artifacts
 
+# deployments
+deployments
