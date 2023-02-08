@@ -7,6 +7,7 @@ import { expect } from "chai";
 import { Auction721 } from "../typechain-types/Auction721";
 import { AuctionType } from "./helper/auctionEnums";
 import { time } from "@nomicfoundation/hardhat-network-helpers";
+import { getUnnamedAccounts } from "hardhat";
 
 describe("Auction 721", function () {
   describe("fix price auction", function () {
@@ -20,11 +21,23 @@ describe("Auction 721", function () {
     });
 
     describe("Bidding", function () {
-      // TODO
+      it("should place a bid ", async function () {});
+
+      it("should increase a bid ", async function () {});
+
+      it("should outbid a bid ", async function () {});
     });
 
     describe("Withdraw", function () {
-      // TODO
+      it("should cancel the auction ", async function () {});
+
+      it("should end the auction ", async function () {});
+
+      it("should withdraw nft ", async function () {});
+
+      it("should withdraw funds ", async function () {});
+
+      it("should withdraw with the correct amount of fees and reward", async function () {});
     });
   });
 
@@ -43,11 +56,23 @@ describe("Auction 721", function () {
     });
 
     describe("Bidding", function () {
-      // TODO
+      it("should place a bid ", async function () {});
+
+      it("should increase a bid ", async function () {});
+
+      it("should outbid a bid ", async function () {});
     });
 
     describe("Withdraw", function () {
-      // TODO
+      it("should cancel the auction ", async function () {});
+
+      it("should end the auction ", async function () {});
+
+      it("should withdraw nft ", async function () {});
+
+      it("should withdraw funds ", async function () {});
+
+      it("should withdraw with the correct amount of fees and reward", async function () {});
     });
   });
 
@@ -62,11 +87,23 @@ describe("Auction 721", function () {
     });
 
     describe("Bidding", function () {
-      // TODO
+      it("should place a bid ", async function () {});
+
+      it("should increase a bid ", async function () {});
+
+      it("should outbid a bid ", async function () {});
     });
 
     describe("Withdraw", function () {
-      // TODO
+      it("should cancel the auction ", async function () {});
+
+      it("should end the auction ", async function () {});
+
+      it("should withdraw nft ", async function () {});
+
+      it("should withdraw funds ", async function () {});
+
+      it("should withdraw with the correct amount of fees and reward", async function () {});
     });
   });
 });
