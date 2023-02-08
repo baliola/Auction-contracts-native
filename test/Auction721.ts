@@ -98,7 +98,57 @@ describe("Auction 721", function () {
         expect(maxBidder.toString()).to.equal(bidderAddress);
       });
 
-      it("should outbid a bid ", async function () {});
+      it("should outbid a bid ", async function () {
+        const testAccounts = await ethers.getUnnamedSigners();
+
+        const fixtures = await fixPriceAuction721Fixture();
+
+        const bidder = testAccounts[0];
+        const bidderAddress = bidder.address;
+
+        let auction = fixtures.auction.connect(bidder);
+        const price = ethers.utils.parseEther(fixtures.startPrice.concat("2"));
+        const action = await auction.placeBid({
+          value: price,
+          from: bidderAddress,
+        });
+        const bid = await action.wait();
+
+        const events = bid.events as Event[];
+        const bidEvent = filterEvent(events, AuctionEvents.NEW_BID);
+
+        // should emit appropriate events
+        expect(bidEvent?.args?.bidder).to.equal(bidderAddress);
+        expect(bidEvent?.args?.amount.toString()).to.equal(price.toString());
+
+        const secondBidder = testAccounts[1];
+        const secondBidderAddress = secondBidder.address;
+        auction = fixtures.auction.connect(secondBidder);
+
+        const secondPrice = ethers.utils.parseEther("1");
+        const secondAction = await auction.placeBid({
+          value: secondPrice,
+          from: secondBidderAddress,
+        });
+
+        const secondBid = await secondAction.wait();
+
+        const secondEvents = secondBid.events as Event[];
+        const secondBidEvent = filterEvent(secondEvents, AuctionEvents.NEW_BID);
+
+        const maxBid = await auction.maxBid();
+        const maxBidder = await auction.maxBidder();
+
+        // should emit appropriate events
+        expect(secondBidEvent?.args?.bidder).to.equal(secondBidderAddress);
+        expect(secondBidEvent?.args?.amount.toString()).to.equal(
+          secondPrice.toString()
+        );
+
+        // should change the max bid amount and maxbidder
+        expect(maxBid.toString()).to.equal(secondPrice.toString());
+        expect(maxBidder.toString()).to.equal(secondBidderAddress);
+      });
 
       it("should bid and end the auction", async function () {});
     });
