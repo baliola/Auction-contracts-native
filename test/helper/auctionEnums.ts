@@ -24,3 +24,5 @@ export enum AuctionEvents {
 export enum AuctionManagerEvents {
   NEW_AUCTION = "NewAuction",
 }
+
+export const DAY_IN_SECS = 86400;
