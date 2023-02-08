@@ -94,7 +94,7 @@ export async function openBidAuction721Fixture(startPrice = "0.1") {
   return { auction, nft, auctionManager };
 }
 
-function filterEvent(events: Event[], eventName: string) {
+export function filterEvent(events: Event[], eventName: string) {
   for (const event of events) {
     if (event.event === eventName) return event;
   }
