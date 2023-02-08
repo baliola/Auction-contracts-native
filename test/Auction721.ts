@@ -57,7 +57,46 @@ describe("Auction 721", function () {
         expect(maxBidder.toString()).to.equal(bidderAddress);
       });
 
-      it("should increase a bid ", async function () {});
+      it("should increase a bid ", async function () {
+        const testAccounts = await ethers.getUnnamedSigners();
+
+        const fixtures = await fixPriceAuction721Fixture();
+
+        const bidder = testAccounts[0];
+        const bidderAddress = bidder.address;
+
+        const auction = fixtures.auction.connect(bidder);
+        const price = ethers.utils.parseEther(fixtures.startPrice.concat("2"));
+        const action = await auction.placeBid({
+          value: price,
+          from: bidderAddress,
+        });
+        const bid = await action.wait();
+
+        const events = bid.events as Event[];
+        const bidEvent = filterEvent(events, AuctionEvents.NEW_BID);
+
+        // should emit appropriate events
+        expect(bidEvent?.args?.bidder).to.equal(bidderAddress);
+        expect(bidEvent?.args?.amount.toString()).to.equal(price.toString());
+
+        const secondPrice = ethers.utils.parseEther("1");
+        const secondAction = await auction.placeBid({
+          value: secondPrice,
+          from: bidderAddress,
+        });
+
+        const secondBid = await action.wait();
+
+        const maxBid = await auction.maxBid();
+        const maxBidder = await auction.maxBidder();
+
+        const expectedPrice = price.add(secondPrice);
+
+        // should change the max bid amount and maxbidder
+        expect(maxBid.toString()).to.equal(expectedPrice.toString());
+        expect(maxBidder.toString()).to.equal(bidderAddress);
+      });
 
       it("should outbid a bid ", async function () {});
 
