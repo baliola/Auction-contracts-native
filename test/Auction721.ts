@@ -9,16 +9,7 @@ import { AuctionType } from "./helper/auctionEnums";
 import { time } from "@nomicfoundation/hardhat-network-helpers";
 
 describe("Auction 721", function () {
-  describe("Deployments", function () {
-    it("should create a new open bid auction", async function () {
-      const fixtures = await openBidAuction721Fixture();
-
-      const auction = fixtures.auction;
-
-      const type = await auction.getAuctionType();
-      expect(type).to.equal(AuctionType.OPEN_BID);
-    });
-
+  describe("fix price auction", function () {
     it("should create a new fix price auction", async function () {
       const fixtures = await fixPriceAuction721Fixture();
 
@@ -28,6 +19,16 @@ describe("Auction 721", function () {
       expect(type).to.equal(AuctionType.FIXED_PRICE);
     });
 
+    describe("Bidding", function () {
+      // TODO
+    });
+
+    describe("Withdraw", function () {
+      // TODO
+    });
+  });
+
+  describe("time auction ", function () {
     it("should create a new time auction ", async function () {
       const current = await time.latest();
       const dayInSec = 86400;
@@ -39,6 +40,25 @@ describe("Auction 721", function () {
 
       const type = await auction.getAuctionType();
       expect(type).to.equal(AuctionType.TIME_AUCTION);
+    });
+
+    describe("Bidding", function () {
+      // TODO
+    });
+
+    describe("Withdraw", function () {
+      // TODO
+    });
+  });
+
+  describe("open bid auction", function () {
+    it("should create a new open bid auction", async function () {
+      const fixtures = await openBidAuction721Fixture();
+
+      const auction = fixtures.auction;
+
+      const type = await auction.getAuctionType();
+      expect(type).to.equal(AuctionType.OPEN_BID);
     });
 
     describe("Bidding", function () {
