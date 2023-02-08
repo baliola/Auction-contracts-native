@@ -12,3 +12,15 @@ export enum AuctionType {
   OPEN_BID = 2,
   UNKNOWN = 3,
 }
+
+export enum AuctionEvents {
+  NEW_BID = "NewBid",
+  WITHDRAW_TOKEN = "WithdrawToken",
+  WITHDRAW_FUNDS = "WithdrawFunds",
+  CANCELLED = "AuctionCanceled",
+  ENDED_BY_CREATOR = "EndedByCreator",
+}
+
+export enum AuctionManagerEvents {
+  NEW_AUCTION = "NewAuction",
+}

@@ -91,7 +91,7 @@ export async function openBidAuction721Fixture(startPrice = "0.1") {
     auctionAddress
   );
 
-  return { auction, nft, auctionManager };
+  return { seller, auction, nft, auctionManager };
 }
 
 export function filterEvent(events: Event[], eventName: string) {
@@ -149,7 +149,7 @@ export async function timeAuction721Fixture(
     auctionAddress
   );
 
-  return { auction, nft, auctionManager };
+  return { seller, auction, nft, auctionManager };
 }
 
 export async function fixPriceAuction721Fixture(
@@ -198,5 +198,5 @@ export async function fixPriceAuction721Fixture(
     auctionAddress
   );
 
-  return { auction, nft, auctionManager };
+  return { seller, auction, nft, auctionManager, directBuyPrice, startPrice };
 }

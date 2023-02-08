@@ -5,9 +5,11 @@ import {
 } from "./helper/snapshots/Erc721Manager";
 import { expect } from "chai";
 import { Auction721 } from "../typechain-types/Auction721";
-import { AuctionType } from "./helper/auctionEnums";
+import { AuctionEvents, AuctionType } from "./helper/auctionEnums";
 import { time } from "@nomicfoundation/hardhat-network-helpers";
-import { getUnnamedAccounts } from "hardhat";
+import { ethers, getUnnamedAccounts } from "hardhat";
+import { Event } from "ethers";
+import { filterEvent } from "./helper/snapshots/Erc721Manager";
 
 describe("Auction 721", function () {
   describe("fix price auction", function () {
@@ -17,15 +19,49 @@ describe("Auction 721", function () {
       const auction = fixtures.auction;
 
       const type = await auction.getAuctionType();
+      const actualSeller = await auction.creator();
+
+      expect(actualSeller).to.equal(fixtures.seller);
       expect(type).to.equal(AuctionType.FIXED_PRICE);
     });
 
     describe("Bidding", function () {
-      it("should place a bid ", async function () {});
+      it("should place a bid ", async function () {
+        const testAccounts = await ethers.getUnnamedSigners();
+
+        const fixtures = await fixPriceAuction721Fixture();
+
+        const bidder = testAccounts[0];
+        const bidderAddress = bidder.address;
+
+        const auction = fixtures.auction.connect(bidder);
+        const price = ethers.utils.parseEther(fixtures.startPrice.concat("2"));
+        const action = await auction.placeBid({
+          value: price,
+          from: bidderAddress,
+        });
+        const bid = await action.wait();
+
+        const events = bid.events as Event[];
+        const bidEvent = filterEvent(events, AuctionEvents.NEW_BID);
+
+        // should emit appropriate events
+        expect(bidEvent?.args?.bidder).to.equal(bidderAddress);
+        expect(bidEvent?.args?.amount.toString()).to.equal(price.toString());
+
+        const maxBid = await auction.maxBid();
+        const maxBidder = await auction.maxBidder();
+
+        // should change the max bid amount and maxbidder
+        expect(maxBid.toString()).to.equal(price.toString());
+        expect(maxBidder.toString()).to.equal(bidderAddress);
+      });
 
       it("should increase a bid ", async function () {});
 
       it("should outbid a bid ", async function () {});
+
+      it("should bid and end the auction", async function () {});
     });
 
     describe("Withdraw", function () {
@@ -52,6 +88,9 @@ describe("Auction 721", function () {
       const auction = fixtures.auction;
 
       const type = await auction.getAuctionType();
+      const actualSeller = await auction.creator();
+
+      expect(actualSeller).to.equal(fixtures.seller);
       expect(type).to.equal(AuctionType.TIME_AUCTION);
     });
 
@@ -83,6 +122,9 @@ describe("Auction 721", function () {
       const auction = fixtures.auction;
 
       const type = await auction.getAuctionType();
+      const actualSeller = await auction.creator();
+
+      expect(actualSeller).to.equal(fixtures.seller);
       expect(type).to.equal(AuctionType.OPEN_BID);
     });
 
